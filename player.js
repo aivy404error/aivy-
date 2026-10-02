@@ -1,0 +1,15 @@
+(()=>{const p=document.querySelector('.player');if(!p)return;
+const a=new Audio(p.dataset.src),bars=JSON.parse(p.dataset.bars),w=p.querySelector('.wave'),b=p.querySelector('.play'),t=p.querySelector('.time');
+a.preload='none';
+bars.forEach(v=>{const e=document.createElement('b');e.style.height=Math.max(6,v*100)+'%';w.appendChild(e)});
+const f=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'),D=209.9;
+const up=()=>{const d=a.duration||D,r=a.currentTime/d,k=Math.round(r*bars.length);
+[...w.children].forEach((e,i)=>e.classList.toggle('p',i<k));t.textContent=f(a.currentTime)+' / '+f(d)};
+b.onclick=()=>{a.paused?a.play():a.pause()};
+a.onplay=()=>{b.classList.add('on');b.setAttribute('aria-label','一時停止')};
+a.onpause=()=>{b.classList.remove('on');b.setAttribute('aria-label','試聴する')};
+a.ontimeupdate=up;a.onended=()=>{a.currentTime=0;up()};
+const seek=x=>{const r=w.getBoundingClientRect();a.currentTime=Math.min(1,Math.max(0,(x-r.left)/r.width))*(a.duration||D);up()};
+w.onclick=e=>seek(e.clientX);
+w.onkeydown=e=>{if(e.key==='ArrowRight')a.currentTime+=5;if(e.key==='ArrowLeft')a.currentTime-=5};
+})();
